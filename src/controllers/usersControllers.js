@@ -25,24 +25,23 @@ class UserController {
     }
 
     async update(request, response) {
-        const { name, email, password, old_password, avatar} = request.body;
-        const { id } = request.params;
+        const { name, email, password, old_password } = request.body;
+        const user_id = request.user.id;
 
         const user = await knex("users")
-        .where({ id });
+        .where({ id: user_id });
 
         if(!user[0]) {
             throw new AppError("User not found.")
         };
         const userWithUpdatedEmail = await knex("users")
         .where({email: email});
-        if(userWithUpdatedEmail[0] && userWithUpdatedEmail[0].id != id) {
+        if(userWithUpdatedEmail[0] && userWithUpdatedEmail[0].id != user_id) {
             throw new AppError("E-mail already in use.")
         };
 
         user.name = name ?? user.name;
         user.email = email ?? user.email;
-        user.avatar = avatar ?? user.avatar;
 
         if(password && !old_password) {
             throw new AppError("You need to inform the old password to redefine the password.");
@@ -57,12 +56,11 @@ class UserController {
         };
 
         await knex("users")
-        .where({ id })
+        .where({ id: user_id })
         .update({
             name: user.name,
             email: user.email,
             password: user.password,
-            avatar: user.avatar,
             updated_at: knex.fn.now()
         });
         return response.json();
