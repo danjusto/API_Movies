@@ -6,7 +6,7 @@ class NotesController {
     async create(request, response) {
         const { title, description, rating, tags } = request.body;
         const user_id = request.user.id;
-        knex.raw('PRAGMA foreign_keys = ON')
+        
         const checkTitleExists = await knex("notes")
         .where({ title });
 
@@ -44,7 +44,7 @@ class NotesController {
 
     async show(request, response) {
         const { id } = request.params;
-        knex.raw('PRAGMA foreign_keys = ON')
+        
         const note = await knex("notes").where({id}).first();
         const tags = await knex("tags").where({note_id: id}).orderBy("name");
 
@@ -56,7 +56,7 @@ class NotesController {
 
     async delete(request, response) {
         const { id } = request.params;
-        knex.raw('PRAGMA foreign_keys = ON')
+        
         await knex("notes").where({ id }).delete();
 
         return response.json();
@@ -65,7 +65,7 @@ class NotesController {
     async index(request, response) {
         const { title } = request.query;
         const user_id = request.user.id;
-        knex.raw('PRAGMA foreign_keys = ON')
+        
         let notes;
 
         notes = await knex("notes").where({ user_id }).whereLike("title", `%${title}%`).orderBy("title");

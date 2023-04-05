@@ -2,13 +2,13 @@ require("express-async-errors");
 require("dotenv/config");
 
 const express = require("express");
-const connection = require("./database/sqlite");
+const migrationRun = require("./database/sqlite/migration");
 const cors = require("cors");
 const uploadConfig = require("./configs/upload");
 const AppError = require("./utils/AppError");
 const routes = require("./routes");
 
-connection();
+migrationRun();
 
 const app = express();
 app.use(cors());
