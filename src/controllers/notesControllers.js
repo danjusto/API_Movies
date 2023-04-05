@@ -8,7 +8,8 @@ class NotesController {
 
         const checkTitleExists = await knex("notes")
         .where({ title });
-        if(checkTitleExists[0]) {
+
+        if(checkTitleExists[0] && checkTitleExists[0].user_id === user_id) {
             throw new AppError("This movie has already been added.");
         }
 
